@@ -153,44 +153,93 @@ a:hover { text-decoration: underline; color: #ff2222; }
 </ul>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAeeSTyQgCAOw4AbcMJ0rm3V5IOz-INXTE",
-    authDomain: "moviesmidias.firebaseapp.com",
-    projectId: "moviesmidias",
-    storageBucket: "moviesmidias.appspot.com",
-    messagingSenderId: "746239621398",
-    appId: "1:746239621398:web:f5ca556bcfc9ed406af837",
-    measurementId: "G-STD5R0RG61"
-  };
+// Config do Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAeeSTyQgCAOw4AbcMJ0rm3V5IOz-INXTE",
+  authDomain: "moviesmidias.firebaseapp.com",
+  projectId: "moviesmidias",
+  storageBucket: "moviesmidias.appspot.com",
+  messagingSenderId: "746239621398",
+  appId: "1:746239621398:web:f5ca556bcfc9ed406af837",
+  measurementId: "G-STD5R0RG61"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  let usuarioAtual = null;
+let usuarioAtual = null;
+const provider = new GoogleAuthProvider();
 
-  const provider = new GoogleAuthProvider();
-  document.getElementById("loginBtn").addEventListener("click", () => signInWithPopup(auth, provider));
-  document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+// Botões de login/logout
+document.getElementById("loginBtn").addEventListener("click", () => signInWithPopup(auth, provider));
+document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
 
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      usuarioAtual = user;
-      document.getElementById("userInfo").textContent = `Logado como: ${user.displayName}`;
-      carregarEstado();
-    } else {
-      usuarioAtual = null;
-      document.getElementById("userInfo").textContent = "Não logado";
+// ---- Salvar estado de cada filme ----
+async function salvarFilme(filmeId) {
+  if (!usuarioAtual) return;
+  const check = document.getElementById(filmeId);
+  const nota = document.getElementById("nota-" + filmeId)?.value || "";
+  const ref = doc(db, "usuarios", usuarioAtual.uid, "filmes", filmeId);
+  await setDoc(ref, { visto: check.checked, nota: nota }, { merge: true });
+}
+
+// ---- Carregar estado ----
+async function carregarEstado() {
+  if (!usuarioAtual) return;
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  for (const cb of checkboxes) {
+    const ref = doc(db, "usuarios", usuarioAtual.uid, "filmes", cb.id);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      cb.checked = data.visto || false;
+      const notaInput = document.getElementById("nota-" + cb.id);
+      if (notaInput && data.nota !== undefined) {
+        notaInput.value = data.nota;
+      }
     }
+  }
+}
+
+// ---- Adicionar listeners ----
+function adicionarListeners() {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const notas = document.querySelectorAll('input[type="number"]');
+
+  checkboxes.forEach(cb => {
+    cb.addEventListener("change", () => salvarFilme(cb.id));
   });
+
+  notas.forEach(nota => {
+    nota.addEventListener("input", () => {
+      const filmeId = nota.id.replace("nota-", "");
+      salvarFilme(filmeId);
+    });
+  });
+}
+
+// ---- Monitorar autenticação ----
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    usuarioAtual = user;
+    document.getElementById("userInfo").textContent = `Logado como: ${user.displayName}`;
+    await carregarEstado();
+    adicionarListeners(); // adiciona os eventos após login
+  } else {
+    usuarioAtual = null;
+    document.getElementById("userInfo").textContent = "Não logado";
+  }
+});
 </script>
 
 </body>
 </html>
+
 
