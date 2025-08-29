@@ -158,7 +158,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-// Config do Firebase
+// Configuração Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAeeSTyQgCAOw4AbcMJ0rm3V5IOz-INXTE",
   authDomain: "moviesmidias.firebaseapp.com",
@@ -177,11 +177,11 @@ const db = getFirestore(app);
 let usuarioAtual = null;
 const provider = new GoogleAuthProvider();
 
-// Botões de login/logout
+// Login / Logout
 document.getElementById("loginBtn").addEventListener("click", () => signInWithPopup(auth, provider));
 document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
 
-// ---- Salvar estado de cada filme ----
+// Função para salvar checkbox e nota
 async function salvarFilme(filmeId) {
   if (!usuarioAtual) return;
   const check = document.getElementById(filmeId);
@@ -190,7 +190,7 @@ async function salvarFilme(filmeId) {
   await setDoc(ref, { visto: check.checked, nota: nota }, { merge: true });
 }
 
-// ---- Carregar estado ----
+// Função para carregar estado salvo
 async function carregarEstado() {
   if (!usuarioAtual) return;
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
@@ -208,7 +208,7 @@ async function carregarEstado() {
   }
 }
 
-// ---- Adicionar listeners ----
+// Adiciona listeners para salvar alterações instantaneamente
 function adicionarListeners() {
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
   const notas = document.querySelectorAll('input[type="number"]');
@@ -225,13 +225,13 @@ function adicionarListeners() {
   });
 }
 
-// ---- Monitorar autenticação ----
+// Monitorar autenticação
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     usuarioAtual = user;
     document.getElementById("userInfo").textContent = `Logado como: ${user.displayName}`;
     await carregarEstado();
-    adicionarListeners(); // adiciona os eventos após login
+    adicionarListeners(); // Adiciona os eventos após login
   } else {
     usuarioAtual = null;
     document.getElementById("userInfo").textContent = "Não logado";
@@ -241,5 +241,6 @@ onAuthStateChanged(auth, async (user) => {
 
 </body>
 </html>
+
 
 
