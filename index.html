@@ -56,6 +56,16 @@ li:hover {
 
 li input[type="checkbox"] { margin-right: 15px; transform: scale(1.5); cursor: pointer; }
 
+li input[type="number"] {
+    width: 60px;
+    margin-left: 15px;
+    background: #111;
+    color: #fff;
+    border: 1px solid #ff4444;
+    border-radius: 5px;
+    padding: 2px 5px;
+}
+
 .icons {
     display: flex;
     gap: 7px;
@@ -91,13 +101,17 @@ a:hover { text-decoration: underline; color: #ff2222; }
 
 <h1>31 Noites de Terror – Maratona Slasher</h1>
 
+<p id="userInfo">Não logado</p>
+<button id="loginBtn">Login com Google</button>
+<button id="logoutBtn">Logout</button>
+
 <audio autoplay loop>
   <source src="https://www.soundjay.com/horror/horror-ambience-01.mp3" type="audio/mpeg">
 </audio>
 
 <h2>👻 Clássicos & Proto-Slasher (60s–70s)</h2>
 <ul>
-<li><input type="checkbox" id="filme-1"><a href="https://drive.google.com/drive/folders/1nJDVVrTsKn8WgvwinB4Duz5PLQj6FpMh" target="_blank">Psicose (1960)</a> <span class="icons"><span class="icon faca">🔪</span></span></li>
+<li><input type="checkbox" id="filme-1"><a href="https://drive.google.com/drive/folders/1nJDVVrTsKn8WgvwinB4Duz5PLQj6FpMh" target="_blank">Psicose (1960)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-1" min="0" max="10" placeholder="Nota"></li>
 <li><input type="checkbox" id="filme-2"><a href="https://drive.google.com/drive/folders/1CB-a9BauXQwbmJfwXNQVXKdgwziV0rsF" target="_blank">O Bebê de Rosemary (1968)</a> <span class="icons"><span class="icon sangue">🩸</span></span></li>
 <li><input type="checkbox" id="filme-3"><a href="https://drive.google.com/drive/folders/1Uo7fsr_BhwtadNvTOPHRK2lNTP9RmO-q" target="_blank">O Massacre da Serra Elétrica (1974)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon sangue">🩸</span></span></li>
 <li><input type="checkbox" id="filme-5"><a href="https://www.primevideo.com/-/pt/detail/Carrie-A-Estranha-1976/0IE43SXN19DM93KSGY7HSCIHFX" target="_blank">Carrie, A Estranha (1976)</a> <span class="icons"><span class="icon sangue">🩸</span></span></li>
@@ -138,26 +152,45 @@ a:hover { text-decoration: underline; color: #ff2222; }
 <li><input type="checkbox" id="filme-31"><a href="https://www.netflix.com/br-en/title/81630892?source=35&fromWatch=true" target="_blank">Pearl (2019)</a> <span class="icons"><span class="icon faca">🔪</span></span></li>
 </ul>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-  // Carregar estado salvo
-  checkboxes.forEach(cb => {
-    const saved = localStorage.getItem(cb.id);
-    if (saved === "true") {
-      cb.checked = true;
+  const firebaseConfig = {
+    apiKey: "AIzaSyAeeSTyQgCAOw4AbcMJ0rm3V5IOz-INXTE",
+    authDomain: "moviesmidias.firebaseapp.com",
+    projectId: "moviesmidias",
+    storageBucket: "moviesmidias.appspot.com",
+    messagingSenderId: "746239621398",
+    appId: "1:746239621398:web:f5ca556bcfc9ed406af837",
+    measurementId: "G-STD5R0RG61"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let usuarioAtual = null;
+
+  const provider = new GoogleAuthProvider();
+  document.getElementById("loginBtn").addEventListener("click", () => signInWithPopup(auth, provider));
+  document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      usuarioAtual = user;
+      document.getElementById("userInfo").textContent = `Logado como: ${user.displayName}`;
+      carregarEstado();
+    } else {
+      usuarioAtual = null;
+      document.getElementById("userInfo").textContent = "Não logado";
     }
   });
-
-  // Salvar estado ao clicar
-  checkboxes.forEach(cb => {
-    cb.addEventListener("change", () => {
-      localStorage.setItem(cb.id, cb.checked);
-    });
-  });
-});
 </script>
 
 </body>
 </html>
+
