@@ -1,163 +1,285 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>31 Noites de Terror – Maratona Slasher</title>
+
 <style>
-body {
-    font-family: 'Arial Black', sans-serif;
-    background: radial-gradient(circle at top, #1a0000, #000000);
-    color: #fff;
-    padding: 20px;
-    animation: bgpulse 20s infinite alternate;
+/* ===== Base / tema ===== */
+:root{
+  --bg:#000;
+  --bg2:#140000;
+  --card:#1a0000;
+  --accent:#ff2a2a;
+  --accent-2:#ff6b6b;
+  --text:#fff;
+  --muted:#c9c9c9;
+  --shadow:0 12px 30px rgba(255,0,0,.12);
 }
-@keyframes bgpulse {
-    0% { background: radial-gradient(circle at top, #1a0000, #000000); }
-    50% { background: radial-gradient(circle at top, #330000, #111111); }
-    100% { background: radial-gradient(circle at top, #660000, #222222); }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Arial Black", sans-serif;
+  color:var(--text);
+  background:
+     radial-gradient(1200px 600px at 50% -10%, #330000 0%, transparent 70%),
+     radial-gradient(1200px 600px at 50% 110%, #220000 0%, transparent 70%),
+     linear-gradient(180deg, var(--bg2), var(--bg));
+}
+a{color:inherit}
+
+/* ===== Header ===== */
+.header{
+  padding:28px 20px 12px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; flex-wrap:wrap;
+}
+.brand{
+  display:flex; align-items:baseline; gap:10px;
+  letter-spacing:2px;
+}
+.brand h1{
+  margin:0;
+  font-size: clamp(28px, 5vw, 44px);
+  color:var(--accent);
+  text-shadow: 0 0 18px rgba(255,0,0,.35);
+  font-weight:900;
+}
+.brand .dot{
+  width:14px; height:14px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #ff9d9d, #ff0000 60%, #850000 100%);
+  box-shadow: 0 0 24px rgba(255,0,0,.6), 0 0 60px rgba(255,0,0,.25) inset;
+}
+.userbar{
+  display:flex; align-items:center; gap:10px;
+}
+.btn{
+  background:transparent; color:var(--text);
+  border:1px solid #ff3a3a; padding:8px 12px; border-radius:999px;
+  cursor:pointer; transition:.2s transform, .2s box-shadow, .2s background;
+}
+.btn:hover{ transform: translateY(-1px); box-shadow:0 6px 18px rgba(255,0,0,.2); background:rgba(255,0,0,.08);}
+#userInfo{opacity:.85; font-size:14px}
+
+/* ===== Categorias (seta/linha como no rascunho) ===== */
+.section{
+  padding:6px 20px 0;
+}
+.sectionTitle{
+  display:flex; align-items:center; gap:10px; margin:10px 0 8px;
+  color:#ff9a9a; letter-spacing:1px; text-transform:uppercase; font-weight:700;
+}
+.sectionTitle::before{
+  content:"";
+  flex:1; height:2px; background:linear-gradient(90deg, transparent, #4d0000 40%, #ff3a3a 65%, transparent);
 }
 
-h1 {
-    text-align: center;
-    color: #ff4444;
-    font-size: 3em;
-    text-shadow: 2px 2px 10px #000;
-    animation: glow 1.5s infinite alternate;
+/* ===== Grade de capas ===== */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+  gap:14px;
+  padding: 10px 20px 28px;
 }
-@keyframes glow {
-    0% { text-shadow: 2px 2px 10px #000; }
-    100% { text-shadow: 2px 2px 20px #ff0000; }
+.card{
+  position:relative;
+  aspect-ratio: 2/3;
+  border-radius:18px;
+  overflow:hidden;
+  background: linear-gradient(145deg, #2a0000, #0b0000);
+  border:1px solid #3c0000;
+  box-shadow: var(--shadow);
+  cursor:pointer;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card:hover{ transform: translateY(-4px); border-color:#ff2a2a; box-shadow:0 14px 34px rgba(255,0,0,.22);}
+.card::after{
+  /* brilho diagonal */
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(180px 120px at -10% -10%, rgba(255,70,70,.22), transparent 60%),
+              radial-gradient(180px 120px at 110% 110%, rgba(255,50,50,.15), transparent 60%);
+  pointer-events:none;
+}
+/* título no rodapé da capa */
+.card .title{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:10px 10px 12px;
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,.55) 40%, rgba(0,0,0,.75));
+  font-size:13px; line-height:1.25; font-weight:700;
+}
+/* mini “check” quando marcado como visto */
+.card .seen{
+  position:absolute; top:8px; left:8px;
+  width:22px; height:22px; border-radius:50%;
+  border:1px solid #2bff00; color:#2bff00;
+  display:grid; place-items:center; font-size:14px;
+  background:rgba(43,255,0,.08); opacity:0; transform:scale(.8);
+  transition:.18s;
+}
+.card.is-seen .seen{ opacity:1; transform:scale(1)}
+
+/* ===== Modal ===== */
+.modal{
+  position: fixed; inset:0; display:none;
+  align-items:center; justify-content:center;
+  background: rgba(0,0,0,.6);
+  z-index:1000;
+}
+.modal.open{ display:flex }
+.modalPanel{
+  width:min(680px, 92vw);
+  background: #0b0000;
+  border:1px solid #3b0000;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,0,0,.15) inset;
+}
+.modalHead{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:16px 18px;
+  background: linear-gradient(180deg, #1a0000, #0b0000);
+  border-bottom:1px solid #2e0000;
+}
+.modalTitle{font-weight:900}
+.modalClose{
+  background:transparent; border:none; color:#fff; font-size:22px; cursor:pointer;
+}
+.modalBody{ padding:18px; display:grid; gap:16px;}
+.modalCoverAndMeta{
+  display:grid; grid-template-columns: 180px 1fr; gap:18px;
+}
+.modalCover{
+  border-radius:16px; overflow:hidden; background:#120000; aspect-ratio:2/3;
+  border:1px solid #300000;
+}
+.metaRow{ display:flex; align-items:center; gap:12px; flex-wrap:wrap;}
+.metaRow label{ opacity:.9 }
+
+/* ===== Estrelas ===== */
+.stars{
+  --size:28px;
+  display:inline-flex; gap:6px; direction:rtl; /* permite preencher à esquerda */
+}
+.stars input{ display:none }
+.stars label{
+  width:var(--size); height:var(--size); cursor:pointer;
+  display:inline-grid; place-items:center;
+  filter: drop-shadow(0 4px 8px rgba(255,0,0,.2));
+  transform-origin:center;
+  transition: transform .12s ease;
+}
+.stars label:hover{ transform: scale(1.1); }
+.stars label::before{
+  content:"★"; font-size: calc(var(--size) - 2px);
+  color:#3a0909; /* vazio */
+  text-shadow: 0 0 0 transparent;
+}
+.stars input:checked ~ label::before,
+.stars label:hover ~ label::before,
+.stars input:checked + label::before{
+  color:var(--accent-2); text-shadow:0 0 16px rgba(255,80,80,.45);
 }
 
-h2 {
-    margin-top: 30px;
-    font-size: 1.8em;
-    color: #ff7777;
-    text-shadow: 1px 1px 5px #000;
+/* checkbox */
+.switch{
+  display:inline-flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
 }
-
-ul { list-style: none; padding: 0; }
-li {
-    margin: 10px 0;
-    padding: 12px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: linear-gradient(120deg, #2a0000, #550000);
-    border: 2px solid #ff2222;
-    box-shadow: 0 0 15px #ff0000;
-    transition: transform 0.2s, box-shadow 0.2s;
+.switch input{ appearance:none; width:44px; height:24px; border-radius:999px; background:#2a0000; position:relative; outline:none; transition:.2s; border:1px solid #4a0000;}
+.switch input:checked{ background:#133b00; border-color:#2bff00}
+.switch input::after{
+  content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%;
+  background:#fff; transition:.2s;
 }
-li:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 25px #ff5555;
+.switch input:checked::after{ transform: translateX(20px); background:#b9ffb0 }
+
+/* Barra de ações */
+.actions{
+  display:flex; justify-content:flex-end; gap:10px; padding:12px 18px 18px;
 }
-
-li input[type="checkbox"] { margin-right: 15px; transform: scale(1.5); cursor: pointer; }
-
-li input[type="number"] {
-    width: 60px;
-    margin-left: 15px;
-    background: #111;
-    color: #fff;
-    border: 1px solid #ff4444;
-    border-radius: 5px;
-    padding: 2px 5px;
+.actions .btn.primary{
+  background: linear-gradient(180deg, #ff3a3a, #cc1d1d); border: none;
+  box-shadow: 0 8px 22px rgba(255,0,0,.35);
 }
+.actions .btn.primary:hover{ transform: translateY(-1px) }
 
-.icons {
-    display: flex;
-    gap: 7px;
-    font-size: 1.5em;
-}
-
-.faca { color: #ff0000; animation: drip 1.5s infinite; }
-.sangue { color: #990000; animation: drip 1.5s infinite 0.5s; }
-.mascara { color: #cccccc; }
-.boneca { color: #ff99cc; animation: wobble 1s infinite alternate; }
-
-a {
-    color: #ff9999;
-    text-decoration: none;
-    font-weight: bold;
-}
-a:hover { text-decoration: underline; color: #ff2222; }
-
-@keyframes drip {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-    100% { transform: translateY(0); }
-}
-
-@keyframes wobble {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(5deg); }
-    100% { transform: rotate(-5deg); }
+/* responsivo */
+@media (max-width: 640px){
+  .modalCoverAndMeta{ grid-template-columns: 1fr }
 }
 </style>
 </head>
 <body>
 
-<h1>31 Noites de Terror – Maratona Slasher</h1>
+<header class="header">
+  <div class="brand">
+    <h1>horror</h1>
+    <span class="dot" aria-hidden="true"></span>
+    <h1>nights</h1>
+  </div>
+  <div class="userbar">
+    <span id="userInfo">Não logado</span>
+    <button id="loginBtn" class="btn">Login Google</button>
+    <button id="logoutBtn" class="btn">Logout</button>
+  </div>
+</header>
 
-<p id="userInfo">Não logado</p>
-<button id="loginBtn">Login com Google</button>
-<button id="logoutBtn">Logout</button>
+<!-- Categorias + grade (tudo na mesma grade; você pode separar por seção se quiser) -->
+<section class="section">
+  <div class="sectionTitle">categoria</div>
+  <div id="grid" class="grid">
+    <!-- cards gerados via JS -->
+  </div>
+</section>
 
-<audio autoplay loop>
-  <source src="https://www.soundjay.com/horror/horror-ambience-01.mp3" type="audio/mpeg">
-</audio>
+<!-- ===== Modal ===== -->
+<div id="movieModal" class="modal" aria-hidden="true">
+  <div class="modalPanel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modalHead">
+      <div class="modalTitle" id="modalTitle">Filme</div>
+      <button class="modalClose" id="modalClose" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modalBody">
+      <div class="modalCoverAndMeta">
+        <div id="modalCover" class="modalCover"></div>
+        <div>
+          <div class="metaRow">
+            <label>Nota:</label>
+            <div id="starGroup" class="stars" aria-label="Avaliação de 1 a 5 estrelas">
+              <!-- 5…1 (rtl) -->
+              <input type="radio" name="stars" id="star5" value="5"><label for="star5" title="5 estrelas"></label>
+              <input type="radio" name="stars" id="star4" value="4"><label for="star4" title="4 estrelas"></label>
+              <input type="radio" name="stars" id="star3" value="3"><label for="star3" title="3 estrelas"></label>
+              <input type="radio" name="stars" id="star2" value="2"><label for="star2" title="2 estrelas"></label>
+              <input type="radio" name="stars" id="star1" value="1"><label for="star1" title="1 estrela"></label>
+            </div>
+            <span id="starValue" style="opacity:.8"></span>
+          </div>
+          <div class="metaRow">
+            <label class="switch">
+              <input type="checkbox" id="watchedChk">
+            </label>
+            <span>Já assisti</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="clearBtn">Limpar</button>
+      <button class="btn primary" id="saveBtn">Salvar</button>
+    </div>
+  </div>
+</div>
 
-<h2>👻 Clássicos & Proto-Slasher (60s–70s)</h2>
-<ul>
-<li><input type="checkbox" id="filme-1"><a href="https://drive.google.com/drive/folders/1nJDVVrTsKn8WgvwinB4Duz5PLQj6FpMh" target="_blank">Psicose (1960)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-1" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-2"><a href="https://drive.google.com/drive/folders/1CB-a9BauXQwbmJfwXNQVXKdgwziV0rsF" target="_blank">O Bebê de Rosemary (1968)</a> <span class="icons"><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-2" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-3"><a href="https://drive.google.com/drive/folders/1Uo7fsr_BhwtadNvTOPHRK2lNTP9RmO-q" target="_blank">O Massacre da Serra Elétrica (1974)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-3" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-5"><a href="https://www.primevideo.com/-/pt/detail/Carrie-A-Estranha-1976/0IE43SXN19DM93KSGY7HSCIHFX" target="_blank">Carrie, A Estranha (1976)</a> <span class="icons"><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-5" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-6"><a href="https://drive.google.com/drive/folders/1-QQzqSe3ibUjq1OE2vSi7gZaeffDBX48" target="_blank">Suspiria (1977)</a> <span class="icons"><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-6" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-7"><a href="https://drive.google.com/drive/folders/1zSXbx7wqe_IEkJnXl7FWmKIQFA50IZkG" target="_blank">Halloween (1978)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-7" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-8"><a href="https://www.disneyplus.com/pt-br/browse/entity-27389b6b-bf27-45a6-afdf-cef0fe723cff" target="_blank">Alien: O 8º Passageiro (1979)</a> <span class="icons"><span class="icon mascara">👾</span></span> <input type="number" id="nota-filme-8" min="0" max="10" placeholder="Nota"></li>
-</ul>
-
-<h2>🔪 Slasher & Gore (80s–90s)</h2>
-<ul>
-<li><input type="checkbox" id="filme-4"><a href="https://www.hbomax.com/br/pt/movies/o-iluminado/9370f169-89d8-48c6-912d-8b10590a4de2" target="_blank">O Iluminado (1980)</a> <span class="icons"><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-4" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-9"><a href="https://www.hbomax.com/br/pt/movies/sexta-feira-13-1980/091df698-401e-42d9-9886-0b9d4c41b460?utm_source=universal_search" target="_blank">Sexta-Feira 13 (1980)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-9" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-10"><a href="https://x.com/horrordrives/status/1854878401087013375?t=8BaLutevDC_z9YlvvZHRvg&s=19" target="_blank">Chamas da Morte (1981)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-10" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-11"><a href="https://x.com/driveshorror/status/1753531643090858307?t=1LruBfZXFTNqi9Aaycbjqw&s=19" target="_blank">Dia dos Namorados Macabro (1981)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-11" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-12"><a href="https://www.primevideo.com/dp/amzn1.dv.gti.16b37cfa-68e9-e375-d65a-1501afcd27d5?autoplay=0&ref_=atv_cf_strg_wb" target="_blank">The Thing (1982)</a> <span class="icons"><span class="icon mascara">👾</span></span> <input type="number" id="nota-filme-12" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-13"><a href="https://x.com/driveshorror/status/1784609217673875836?t=8CcqAxPn0KVFVLhtOozHng&s=19" target="_blank">Sleepaway Camp (1983)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-13" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-14"><a href="https://www.hbomax.com/br/pt/movies/hora-do-pesadelo/2d0cd140-c9cc-4c3b-8010-f930ef077379?utm_source=universal_search" target="_blank">A Hora do Pesadelo (1984)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-14" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-15"><a href="https://www.disneyplus.com/en-br/browse/entity-b2ae8903-e3c5-4ae1-a9f7-885c04985f96?distributionPartner=google" target="_blank">Aliens: O Resgate (1986)</a> <span class="icons"><span class="icon mascara">👾</span></span> <input type="number" id="nota-filme-15" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-16"><a href="https://x.com/acervododrive/status/1614019582926245891?t=V5AJdJaGyjhvyjpPuiPtXQ&s=19" target="_blank">Hellraiser (1987)</a> <span class="icons"><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-16" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-26"><a href="https://x.com/acervododrive/status/1710731719869911407?t=efpcpdkYqDQ1eTrMQTo2PA&s=19" target="_blank">Atração Mortal (1988)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-26" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-17"><a href="https://www.primevideo.com/-/pt/detail/Chucky-O-Brinquedo-Assassino/0KABCJ3D1HS0OK0BPTIKWKJUJR" target="_blank">Chucky: O Brinquedo Assassino (1988)</a> <span class="icons"><span class="icon boneca">🪆</span><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-17" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-18"><a href="https://www.hbomax.com/br/pt/movies/de-stephen-king-it-uma-obra-prima-do-medo/0c9f19d2-93a3-498b-9402-97625373b67f" target="_blank">It: A Coisa (1990)</a> <span class="icons"><span class="icon mascara">🤡</span><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-18" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-19"><a href="https://tv.apple.com/br/movie/o-misterio-de-candyman/umc.cmc.5o7md7yi6ammidcgd8s6tj47r" target="_blank">Candyman (1992)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-19" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-20"><a href="https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19" target="_blank">Pânico (1996)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-20" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-21"><a href="https://www.netflix.com/br-en/title/1181714?source=35&fromWatch=true" target="_blank">Eu Sei o Que Vocês Fizeram no Verão Passado (1997)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-21" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-22"><a href="https://www.primevideo.com/-/pt/detail/Event-Horizon-Nave-do-Terror/0KABCJ3D1HS0OK0BPTIKWKJUJR" target="_blank">Event Horizon (1997)</a> <span class="icons"><span class="icon mascara">👾</span></span> <input type="number" id="nota-filme-22" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-23"><a href="https://www.netflix.com/br/title/70011198" target="_blank">Lenda Urbana (1998)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-23" min="0" max="10" placeholder="Nota"></li>
-</ul>
-
-<h2>👻 Terror Sobrenatural Moderno</h2>
-<ul>
-<li><input type="checkbox" id="filme-24"><a href="https://tv.apple.com/br/movie/o-chamado/umc.cmc.2ksr5tpy9g97n8d3ohyqog9o5" target="_blank">O Chamado (2002)</a> <span class="icons"><span class="icon mascara">👻</span></span> <input type="number" id="nota-filme-24" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-25"><a href="https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19" target="_blank">O Grito (2004)</a> <span class="icons"><span class="icon mascara">👻</span></span> <input type="number" id="nota-filme-25" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-27"><a href="https://www.hbomax.com/br/pt/movies/invocacao-do-mal/d1b146e9-7426-4463-804d-3ca656e38492?utm_source=universal_search" target="_blank">Invocação do Mal (2013)</a> <span class="icons"><span class="icon mascara">👻</span></span> <input type="number" id="nota-filme-27" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-28"><a href="https://www.hbomax.com/br/pt/movies/annabelle/91307316-5bba-408f-a100-fbf2e1d530a5?utm_source=universal_search" target="_blank">Annabelle (2014)</a> <span class="icons"><span class="icon boneca">🪆</span></span> <input type="number" id="nota-filme-28" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-29"><a href="https://drive.google.com/drive/folders/15YuBn0s0u8tf42GvFxowZp-zY-sH4mS6" target="_blank">Midsommar (2019)</a> <span class="icons"><span class="icon mascara">🎭</span></span> <input type="number" id="nota-filme-29" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-30"><a href="https://www.primevideo.com/dp/amzn1.dv.gti.04b9bf47-60c8-9918-e3f3-d522194323fd?autoplay=0&ref_=atv_cf_strg_wb" target="_blank">Terrifier (2019)</a> <span class="icons"><span class="icon faca">🔪</span><span class="icon sangue">🩸</span></span> <input type="number" id="nota-filme-30" min="0" max="10" placeholder="Nota"></li>
-<li><input type="checkbox" id="filme-31"><a href="https://www.netflix.com/br-en/title/81630892?source=35&fromWatch=true" target="_blank">Pearl (2019)</a> <span class="icons"><span class="icon faca">🔪</span></span> <input type="number" id="nota-filme-31" min="0" max="10" placeholder="Nota"></li>
-</ul>
-
+<!-- ===== Scripts Firebase + App ===== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
+/* ====== Cole SEU firebaseConfig aqui ====== */
 const firebaseConfig = {
   apiKey: "AIzaSyAeeSTyQgCAOw4AbcMJ0rm3V5IOz-INXTE",
   authDomain: "moviesmidias.firebaseapp.com",
@@ -169,70 +291,210 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+try { getAnalytics(app); } catch(e) { }
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-let usuarioAtual = null;
 const provider = new GoogleAuthProvider();
 
-// Login e Logout
-document.getElementById("loginBtn").addEventListener("click", () => signInWithPopup(auth, provider));
-document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+let usuarioAtual = null;
+let currentMovieId = null;
 
-// Função para salvar estado de cada filme
-async function salvarFilme(filmeId) {
-  if (!usuarioAtual) return;
-  const check = document.getElementById(filmeId);
-  const notaInput = document.getElementById("nota-" + filmeId);
-  const nota = notaInput ? notaInput.value : "";
-  const ref = doc(db, "usuarios", usuarioAtual.uid, "filmes", filmeId);
-  await setDoc(ref, { visto: check.checked, nota: nota }, { merge: true });
-}
+/* ===== Lista de 31 filmes (id, titulo, ano, link opcional) ===== */
+const movies = [
+  {id:"filme-1",  title:"Psicose", year:1960, link: "https://drive.google.com/drive/folders/1nJDVVrTsKn8WgvwinB4Duz5PLQj6FpMh", poster: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQFAgx3cUlsYbxsajDjsOXmFI960HLCXo1XrWyCU0_AGv0y8B5aq_9N5EAGmywN193HaXYVAQ"},
+  {id:"filme-2",  title:"O Bebê de Rosemary", year:1968, link: "https://drive.google.com/drive/folders/1CB-a9BauXQwbmJfwXNQVXKdgwziV0rsF"},
+  {id:"filme-3",  title:"O Massacre da Serra Elétrica", year:1974, link: "https://drive.google.com/drive/folders/1Uo7fsr_BhwtadNvTOPHRK2lNTP9RmO-q"},
+  {id:"filme-4",  title:"O Iluminado", year:1980, link: "https://www.hbomax.com/br/pt/movies/o-iluminado/9370f169-89d8-48c6-912d-8b10590a4de2"},
+  {id:"filme-5",  title:"Carrie, A Estranha", year:1976, link: "https://www.primevideo.com/-/pt/detail/Carrie-A-Estranha-1976/0IE43SXN19DM93KSGY7HSCIHFX"},
+  {id:"filme-6",  title:"Suspiria", year:1977, link: "https://drive.google.com/drive/folders/1-QQzqSe3ibUjq1OE2vSi7gZaeffDBX48"},
+  {id:"filme-7",  title:"Halloween", year:1978, link: "https://drive.google.com/drive/folders/1zSXbx7wqe_IEkJnXl7FWmKIQFA50IZkG"},
+  {id:"filme-8",  title:"Alien: O 8º Passageiro", year:1979, link: "https://www.disneyplus.com/pt-br/browse/entity-27389b6b-bf27-45a6-afdf-cef0fe723cff"},
+  {id:"filme-9",  title:"Sexta-Feira 13", year:1980, link: "https://www.hbomax.com/br/pt/movies/sexta-feira-13-1980/091df698-401e-42d9-9886-0b9d4c41b460?utm_source=universal_search"},
+  {id:"filme-10", title:"Chamas da Morte", year:1981, link: "https://x.com/horrordrives/status/1854878401087013375?t=8BaLutevDC_z9YlvvZHRvg&s=19"},
+  {id:"filme-11", title:"Dia dos Namorados Macabro", year:1981, link: "https://x.com/driveshorror/status/1753531643090858307?t=1LruBfZXFTNqi9Aaycbjqw&s=19"},
+  {id:"filme-12", title:"The Thing", year:1982, link: "https://www.primevideo.com/dp/amzn1.dv.gti.16b37cfa-68e9-e375-d65a-1501afcd27d5?autoplay=0&ref_=atv_cf_strg_wb"},
+  {id:"filme-13", title:"Sleepaway Camp", year:1983, link: "https://x.com/driveshorror/status/1784609217673875836?t=8CcqAxPn0KVFVLhtOozHng&s=19"},
+  {id:"filme-14", title:"A Hora do Pesadelo", year:1984, link: "https://www.hbomax.com/br/pt/movies/hora-do-pesadelo/2d0cd140-c9cc-4c3b-8010-f930ef077379?utm_source=universal_search"},
+  {id:"filme-15", title:"Aliens: O Resgate", year:1986, link: "https://www.disneyplus.com/en-br/browse/entity-b2ae8903-e3c5-4ae1-a9f7-885c04985f96?distributionPartner=google"},
+  {id:"filme-16", title:"Hellraiser", year:1987, link: "https://x.com/acervododrive/status/1614019582926245891?t=V5AJdJaGyjhvyjpPuiPtXQ&s=19"},
+  {id:"filme-17", title:"Chucky: O Brinquedo Assassino", year:1988, link: "https://www.primevideo.com/-/pt/detail/Chucky-O-Brinquedo-Assassino/0KABCJ3D1HS0OK0BPTIKWKJUJR"},
+  {id:"filme-26", title:"Atração Mortal", year:1988, link: "https://x.com/acervododrive/status/1710731719869911407?t=efpcpdkYqDQ1eTrMQTo2PA&s=19"},
+  {id:"filme-18", title:"It: A Coisa", year:1990, link: "https://www.hbomax.com/br/pt/movies/de-stephen-king-it-uma-obra-prima-do-medo/0c9f19d2-93a3-498b-9402-97625373b67f"},
+  {id:"filme-19", title:"Candyman", year:1992, link: "https://tv.apple.com/br/movie/o-misterio-de-candyman/umc.cmc.5o7md7yi6ammidcgd8s6tj47r"},
+  {id:"filme-20", title:"Pânico", year:1996, link: "https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19"},
+  {id:"filme-21", title:"Eu Sei o Que Vocês Fizeram no Verão Passado", year:1997, link: "https://www.netflix.com/br-en/title/1181714?source=35&fromWatch=true"},
+  {id:"filme-22", title:"Event Horizon", year:1997, link: "https://www.primevideo.com/-/pt/detail/Event-Horizon-Nave-do-Terror/0KABCJ3D1HS0OK0BPTIKWKJUJR"},
+  {id:"filme-23", title:"Lenda Urbana", year:1998, link: "https://www.netflix.com/br/title/70011198"},
+  {id:"filme-24", title:"O Chamado", year:2002, link: "https://tv.apple.com/br/movie/o-chamado/umc.cmc.2ksr5tpy9g97n8d3ohyqog9o5"},
+  {id:"filme-25", title:"O Grito", year:2004, link: "https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19"},
+  {id:"filme-27", title:"Invocação do Mal", year:2013, link: "https://www.hbomax.com/br/pt/movies/invocacao-do-mal/d1b146e9-7426-4463-804d-3ca656e38492?utm_source=universal_search"},
+  {id:"filme-28", title:"Annabelle", year:2014, link: "https://www.hbomax.com/br/pt/movies/annabelle/91307316-5bba-408f-a100-fbf2e1d530a5?utm_source=universal_search"},
+  {id:"filme-29", title:"Midsommar", year:2019, link: "https://drive.google.com/drive/folders/15YuBn0s0u8tf42GvFxowZp-zY-sH4mS6"},
+  {id:"filme-30", title:"Terrifier", year:2019, link: "https://www.primevideo.com/dp/amzn1.dv.gti.04b9bf47-60c8-9918-e3f3-d522194323fd?autoplay=0&ref_=atv_cf_strg_wb"},
+  {id:"filme-31", title:"Pearl", year:2019, link: "https://www.netflix.com/br-en/title/81630892?source=35&fromWatch=true"},
+];
 
-// Carregar estado salvo
-async function carregarEstado() {
-  if (!usuarioAtual) return;
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  for (const cb of checkboxes) {
-    const ref = doc(db, "usuarios", usuarioAtual.uid, "filmes", cb.id);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      const data = snap.data();
-      cb.checked = data.visto || false;
-      const notaInput = document.getElementById("nota-" + cb.id);
-      if (notaInput) notaInput.value = data.nota || "";
-    }
-  }
-}
-
-// Adiciona listeners para salvar alterações automaticamente
-function adicionarListeners() {
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  const notas = document.querySelectorAll('input[type="number"]');
-
-  checkboxes.forEach(cb => cb.addEventListener("change", () => salvarFilme(cb.id)));
-  notas.forEach(nota => {
-    nota.addEventListener("input", () => {
-      const filmeId = nota.id.replace("nota-", "");
-      salvarFilme(filmeId);
-    });
+/* ===== Render das capas ===== */
+const grid = document.getElementById("grid");
+function renderGrid(){
+  grid.innerHTML = "";
+  movies.forEach(m => {
+    const el = document.createElement("div");
+    el.className = "card";
+    el.dataset.id = m.id;
+    el.innerHTML = `
+      <div class="seen" title="Assistido">✓</div>
+      <div class="title">${m.year} · ${m.title}</div>
+    `;
+    // background com poster
+    el.style.backgroundImage =
+      `linear-gradient(145deg, rgba(255,40,40,.08), rgba(0,0,0,.0)), url('${m.poster || ""}')`;
+    el.style.backgroundSize = "cover";
+    el.style.backgroundPosition = "center";
+    grid.appendChild(el);
   });
 }
+renderGrid();
 
-// Monitorar autenticação
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
+/* ===== Modal helpers ===== */
+const modal = document.getElementById("movieModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalCover = document.getElementById("modalCover");
+const watchedChk = document.getElementById("watchedChk");
+const saveBtn = document.getElementById("saveBtn");
+const clearBtn = document.getElementById("clearBtn");
+const starValue = document.getElementById("starValue");
+const starInputs = [...document.querySelectorAll('#starGroup input[name="stars"]')];
+
+// função openModal adaptada para exibir link e poster
+function openModal(movie){
+  currentMovieId = movie.id;
+  modalTitle.textContent = `${movie.year} · ${movie.title}`;
+  modalCover.style.backgroundImage = `linear-gradient(145deg, #210000, #0b0000), url('${movie.poster || ""}')`;
+  modalCover.style.backgroundSize = "cover";
+  modalCover.style.backgroundPosition = "center";
+  
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden","false");
+  
+  loadMovieState(movie.id);
+
+  // ===== Link do filme =====
+  let linkContainer = document.getElementById("movieLink");
+  if(!linkContainer){
+    linkContainer = document.createElement("div");
+    linkContainer.id = "movieLink";
+    linkContainer.className = "metaRow";
+    watchedChk.parentElement.parentElement.appendChild(linkContainer);
+  }
+  if(movie.link){
+    linkContainer.innerHTML = `Link: <a href="${movie.link}" target="_blank" style="color:var(--accent); text-decoration:underline;">Abrir</a>`;
+  } else {
+    linkContainer.innerHTML = "";
+  }
+}
+
+function closeModal(){
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden","true");
+  currentMovieId = null;
+}
+
+/* ===== Eventos do grid (abrir modal) ===== */
+grid.addEventListener("click", (e)=>{
+  const card = e.target.closest(".card");
+  if(!card) return;
+  const movie = movies.find(m => m.id === card.dataset.id);
+  if(!movie) return;
+  openModal(movie);
+});
+
+/* fechar modal */
+document.getElementById("modalClose").onclick = closeModal;
+modal.addEventListener("click", (e)=>{ if(e.target === modal) closeModal(); });
+
+/* ===== Estrelas ===== */
+function getStarSelected(){
+  const checked = starInputs.find(i => i.checked);
+  return checked ? Number(checked.value) : 0;
+}
+function setStars(value){
+  starInputs.forEach(i => i.checked = Number(i.value) === value);
+  starValue.textContent = value ? `${value}/5` : "";
+}
+starInputs.forEach(i => i.addEventListener("change", ()=>{
+  starValue.textContent = `${i.value}/5`;
+  autoSave();
+}));
+
+watchedChk.addEventListener("change", autoSave);
+
+/* ===== Auth ===== */
+document.getElementById("loginBtn").addEventListener("click", ()=>signInWithPopup(auth, provider));
+document.getElementById("logoutBtn").addEventListener("click", ()=>signOut(auth));
+
+onAuthStateChanged(auth, async (user)=>{
+  const info = document.getElementById("userInfo");
+  if(user){
     usuarioAtual = user;
-    document.getElementById("userInfo").textContent = `Logado como: ${user.displayName}`;
-    await carregarEstado();
-    adicionarListeners();
+    info.textContent = `Logado como: ${user.displayName || user.email}`;
+    await refreshSeenBadges();
   } else {
     usuarioAtual = null;
-    document.getElementById("userInfo").textContent = "Não logado";
+    info.textContent = "Não logado";
+    document.querySelectorAll(".card.is-seen").forEach(c => c.classList.remove("is-seen"));
   }
 });
-</script>
 
+/* ===== Firestore ===== */
+async function movieRef(movieId){
+  if(!usuarioAtual) throw new Error("É preciso estar logado.");
+  return doc(db, "users", usuarioAtual.uid, "movies", movieId);
+}
+async function loadMovieState(movieId){
+  if(!usuarioAtual){ setStars(0); watchedChk.checked=false; return; }
+  const ref = await movieRef(movieId);
+  const snap = await getDoc(ref);
+  const data = snap.exists() ? snap.data() : { rating:0, watched:false };
+  setStars(data.rating || 0);
+  watchedChk.checked = !!data.watched;
+}
+async function saveMovieState(){
+  if(!usuarioAtual || !currentMovieId) return;
+  const ref = await movieRef(currentMovieId);
+  await setDoc(ref, {
+    rating: getStarSelected(),
+    watched: watchedChk.checked,
+    updatedAt: serverTimestamp()
+  }, { merge:true });
+  const card = grid.querySelector(`.card[data-id="${currentMovieId}"]`);
+  if(card) card.classList.toggle("is-seen", watchedChk.checked);
+}
+let saveTimer=null;
+function autoSave(){
+  if(!usuarioAtual || !currentMovieId) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveMovieState, 250);
+}
+saveBtn.addEventListener("click", async ()=>{
+  await saveMovieState();
+  closeModal();
+});
+clearBtn.addEventListener("click", async ()=>{
+  setStars(0); watchedChk.checked = false;
+  await saveMovieState();
+});
+async function refreshSeenBadges(){
+  for(const m of movies){
+    try{
+      const ref = doc(db, "users", usuarioAtual.uid, "movies", m.id);
+      const snap = await getDoc(ref);
+      const isSeen = snap.exists() && !!snap.data().watched;
+      const card = grid.querySelector(`.card[data-id="${m.id}"]`);
+      if(card) card.classList.toggle("is-seen", isSeen);
+    } catch(e){}
+  }
+}
+</script>
 </body>
 </html>
