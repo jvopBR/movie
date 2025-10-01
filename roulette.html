@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roleta Slasher</title>
+    <style>
+        /* Estilos baseados no index.html */
+        :root{
+            --bg:#000;
+            --bg2:#140000;
+            --accent:#ff2a2a;
+            --text:#fff;
+            --shadow:0 12px 30px rgba(255,0,0,.12);
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Arial Black", sans-serif;
+            color:var(--text);
+            background:
+                radial-gradient(1200px 600px at 50% -10%, #330000 0%, transparent 70%),
+                radial-gradient(1200px 600px at 50% 110%, #220000 0%, transparent 70%),
+                linear-gradient(180deg, var(--bg2), var(--bg));
+            padding: 20px;
+        }
+
+            .container{
+            padding:28px 20px 12px;
+            display:flex; align-items:center; justify-content:space-between;
+            gap:12px; flex-wrap:wrap;
+            position: absolute; top: 0; left: 0; right: 0;
+            width: 100%;
+            .container .wedge{ position:absolute; inset:0; background: var(--bg); color:#fff; font-weight:700; filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+            .container .wedge .wlabel{
+                position:absolute; left:50%; top:50%;
+                writing-mode: vertical-rl; text-orientation: mixed; white-space:nowrap;
+                transform: rotate(calc(var(--mid) * 1deg)) translate(0, -42%);
+                transform-origin: 0 0;
+                text-shadow:0 1px 2px rgba(0,0,0,.6);
+                padding:0 4px; line-height:1.05; max-height: 90%;
+                font-size: clamp(10px, 12px, 14px);
+            }
+            background: radial-gradient(circle at 30% 30%, #ff9d9d, #ff0000 60%, #850000 100%);
+            box-shadow: 0 0 24px rgba(255,0,0,.6), 0 0 60px rgba(255,0,0,.25) inset;
+        }
+        
+        .btn{
+            background:transparent; color:var(--text);
+            border:1px solid #ff3a3a; padding:8px 12px; border-radius:999px;
+            cursor:pointer; transition:.2s transform, .2s box-shadow, .2s background;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover{ transform: translateY(-1px); box-shadow:0 6px 18px rgba(255,0,0,.2); background:rgba(255,0,0,.08);}
+        .btn.primary {
+            background: linear-gradient(180deg, #ff3a3a, #cc1d1d); border: none;
+            box-shadow: 0 8px 22px rgba(255,0,0,.35);
+        }
+        .btn.primary:hover{ transform: translateY(-1px) }
+
+
+        /* ===== Roleta ===== */
+        .roulette-container {
+            position: relative;
+            width: min(80vw, 500px);
+            height: min(80vw, 500px);
+            margin: 50px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 10px solid #5d0000;
+            box-shadow: 0 0 30px rgba(255,0,0,0.5), inset 0 0 15px rgba(255,0,0,0.3);
+        }
+
+        .roulette {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform: rotate(0deg);
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1); /* Easing para simular a roleta parando */
+        }
+
+        .wheel-segment {
+            position: absolute;
+            bottom: 50%; /* base do triângulo no centro do círculo */
+            left: 50%;   /* centraliza horizontalmente */
+            width: 50%;  /* raio */
+            height: 50%; /* raio */
+            transform-origin: 50% 100%; /* gira a partir da base no centro */
+            overflow: hidden;
+
+            /* Triângulo isósceles com vértice no centro do círculo */
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+
+            background-color: var(--segment-color); /* Definido via JS */
+            border: 1px solid rgba(0,0,0,0.18); /* Linhas finas entre segmentos */
+            box-sizing: border-box; /* Inclui padding e border no cálculo do width/height */
+            z-index: 1;
+        }
+        .wheel-segment.selected{ filter: drop-shadow(0 0 12px rgba(255,0,0,.6)); outline: 2px solid rgba(255,0,0,.7) }
+        
+        .segment-content {
+            position: absolute;
+            top: 50%; /* aproximadamente ao longo do raio */
+            left: 50%;
+            transform: translate(-50%, -58%); /* sobe um pouco para se afastar do centro */
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
+            /* diminui dinamicamente conforme a quantidade de setores */
+            font-size: clamp(9px, calc(17px - var(--n, 20) * 0.22px), 14px);
+            font-weight: bold;
+            color: var(--text-color); /* Definido via JS */
+            text-align: center;
+            padding: 0 2px;
+            line-height: 1;
+            user-select: none;
+            display: none; /* passamos a exibir nomes no anel externo */
+        }
+
+        /* Alterna o lado da escrita quando o setor está na metade esquerda do círculo */
+        .segment-content.flip{
+            writing-mode: vertical-lr;
+        }
+
+        /* Anel de rótulos ao redor da roleta */
+                .labels-arc{ position:absolute; inset:0; z-index:5; pointer-events:none }
+                        .label-arc{ position:absolute; left:50%; top:50%; color:#fff; white-space:nowrap; font-weight:700;
+                            transform: rotate(var(--deg)) translate(var(--r, 180px)) rotate(calc(-1 * var(--deg) - var(--rot, 0deg)));
+          transform-origin: 0 0; text-shadow:0 1px 2px rgba(0,0,0,.6);
+          font-size: clamp(9px, calc(16px - var(--n, 20)*0.2px), 13px);
+          background: rgba(0,0,0,.24); padding:2px 6px; border-radius:8px;
+        }
+        .label-arc.selected{ background: rgba(255,42,42,.75); color:#fff; box-shadow:0 0 10px rgba(255,0,0,.5) }
+
+        /* Marcador/Ponteiro */
+        .pointer {
+            position: absolute;
+            top: -20px; /* Colocado acima da roleta */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 25px solid var(--accent);
+            z-index: 10;
+        }
+
+        #spinBtn {
+            margin-top: 30px;
+            font-size: 1.2em;
+            padding: 10px 25px;
+            font-weight: bold;
+        }
+        
+        #result {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            min-height: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="brand">
+        <h1>horror</h1>
+        <span class="dot" aria-hidden="true"></span>
+        <h1>nights</h1>
+    </div>
+    <div class="userbar">
+        <a href="./index.html" class="btn">Voltar</a>
+    </div>
+</header>
+
+<div class="pointer"></div>
+
+<div class="roulette-container">
+    <div id="roulette" class="roulette"></div>
+    <div id="labelsArc" class="labels-arc"></div>
+</div>
+
+<button id="spinBtn" class="btn primary">GIRAR A ROLETA</button>
+
+<div id="result"></div>
+
+<script>
+    // ===== Filmes (Copiado do seu index.html para ter os dados) =====
+    const allMovies = [
+        {id:"filme-1",  title:"Psicose", year:1960, link: "..."},
+        {id:"filme-2",  title:"O Bebê de Rosemary", year:1968, link: "..."},
+        {id:"filme-3",  title:"O Massacre da Serra Elétrica", year:1974, link: "..."},
+        {id:"filme-4",  title:"O Iluminado", year:1980, link: "..."},
+        {id:"filme-5",  title:"Carrie, A Estranha", year:1976, link: "..."},
+        {id:"filme-6",  title:"Suspiria", year:1977, link: "..."},
+        {id:"filme-7",  title:"Halloween", year:1978, link: "..."},
+        {id:"filme-8",  title:"Alien: O 8º Passageiro", year:1979, link: "..."},
+        {id:"filme-9",  title:"Sexta-Feira 13", year:1980, link: "..."},
+        {id:"filme-10", title:"Chamas da Morte", year:1981, link: "..."},
+        {id:"filme-11", title:"Dia dos Namorados Macabro", year:1981, link: "..."},
+        {id:"filme-12", title:"The Thing", year:1982, link: "..."},
+        {id:"filme-13", title:"Sleepaway Camp", year:1983, link: "..."},
+        {id:"filme-14", title:"A Hora do Pesadelo", year:1984, link: "..."},
+        {id:"filme-15", title:"Aliens: O Resgate", year:1986, link: "..."},
+        {id:"filme-16", title:"Hellraiser", year:1987, link: "..."},
+        {id:"filme-17", title:"Chucky: O Brinquedo Assassino", year:1988, link: "..."},
+        {id:"filme-26", title:"Atração Mortal", year:1988, link: "..."},
+        {id:"filme-18", title:"It: A Coisa", year:1990, link: "..."},
+        {id:"filme-19", title:"Candyman", year:1992, link: "..."},
+        {id:"filme-20", title:"Pânico", year:1996, link: "..."},
+        {id:"filme-21", title:"Eu Sei o Que Vocês Fizeram no Verão Passado", year:1997, link: "..."},
+        {id:"filme-22", title:"Event Horizon", year:1997, link: "..."},
+        {id:"filme-23", title:"Lenda Urbana", year:1998, link: "..."},
+        {id:"filme-24", title:"O Chamado", year:2002, link: "..."},
+        {id:"filme-25", title:"O Grito", year:2004, link: "..."},
+        {id:"filme-27", title:"Invocação do Mal", year:2013, link: "..."},
+        {id:"filme-28", title:"Annabelle", year:2014, link: "..."},
+        {id:"filme-29", title:"Midsommar", year:2019, link: "..."},
+        {id:"filme-30", title:"Terrifier", year:2019, link: "..."},
+        {id:"filme-31", title:"Pearl", year:2019, link: "..."},
+    ];
+
+    const rouletteEl = document.getElementById('roulette');
+    const labelsArcEl = document.getElementById('labelsArc');
+    const spinBtn = document.getElementById('spinBtn');
+    const resultEl = document.getElementById('result');
+    let isSpinning = false;
+    let currentRotation = 0; // graus acumulados da rotação atual
+    let availableMovies = [];
+
+    // Cores para os segmentos
+    const segmentColors = [
+        '#ff7777', // Um vermelho mais claro para o par
+        '#ff2a2a'  // O vermelho principal para o ímpar
+    ];
+    const textColors = [
+        '#1a0000', // Texto escuro para o segmento claro
+        '#fff'     // Texto claro para o segmento escuro
+    ];
+
+    /**
+     * Tenta carregar os IDs dos filmes assistidos do localStorage.
+     * Como o estado do Firestore está no index.html e depende de um usuário logado,
+     * aqui simulamos o filtro lendo o localStorage, que é o que o index.html salva.
+     * Na prática, você precisaria do mesmo mecanismo de login/firestore aqui se quisesse
+     * a filtragem em tempo real e precisa.
+     */
+    function getWatchedMovieIds() {
+        try {
+            // A chave 'userMoviesState' é um palpite. O Ideal seria compartilhar o estado do usuário logado.
+            // Para FINS DE DEMONSTRAÇÃO, vou usar uma chave genérica.
+            const rawData = localStorage.getItem('userMoviesState');
+            if (!rawData) return new Set();
+
+            const moviesState = JSON.parse(rawData);
+            
+            // Filtra os IDs onde 'watched' é true (simulação)
+            const watchedIds = Object.keys(moviesState).filter(id => moviesState[id] && moviesState[id].watched);
+
+            return new Set(watchedIds);
+
+        } catch (e) {
+            console.error("Erro ao carregar estado do localStorage:", e);
+            // Retorna um set vazio para não filtrar nada em caso de erro.
+            return new Set();
+        }
+    }
+
+    /**
+     * Filtra os filmes e renderiza a roleta.
+     */
+    function prepareRoulette() {
+        // calcula raio para posicionar os labels próximo da borda
+        const cont = document.querySelector('.roulette-container');
+        const size = cont.getBoundingClientRect().width; // = height
+        const r = Math.max(0, size/2 - 36); // 36px de margem interna para não colar na borda
+        labelsArcEl.style.setProperty('--r', `${r}px`);
+        rouletteEl.style.setProperty('--r', `${r}px`);
+        // garante que o anel de labels tenha a mesma animação da roleta
+        const easing = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        labelsArcEl.style.transition = easing;
+        // reseta transform para estado inicial sincronizado
+        labelsArcEl.style.transform = 'rotate(0deg)';
+    rouletteEl.style.transform = `rotate(${currentRotation}deg)`;
+    labelsArcEl.style.transform = `rotate(${currentRotation}deg)`;
+    labelsArcEl.style.setProperty('--rot', `${currentRotation}deg`);
+
+        const watchedIds = getWatchedMovieIds();
+        
+        // **FILTRAGEM CRUCIAL**: Apenas filmes não assistidos entram na roleta.
+        availableMovies = allMovies.filter(movie => !watchedIds.has(movie.id));
+
+        if (availableMovies.length === 0) {
+            rouletteEl.innerHTML = '<div style="display:grid; place-items:center; height:100%; color:#ff6b6b; font-size:1.5em; padding:20px;">🎉 Todos os filmes assistidos!</div>';
+            spinBtn.disabled = true;
+            resultEl.textContent = "Parabéns, você assistiu todos os filmes disponíveis!";
+            return;
+        }
+
+        const numSegments = availableMovies.length;
+        const segmentAngle = 360 / numSegments; // Ângulo de cada fatia
+
+    rouletteEl.innerHTML = '';
+    labelsArcEl.innerHTML = '';
+        rouletteEl.style.setProperty('--n', numSegments);
+        
+        availableMovies.forEach((movie, index) => {
+            const el = document.createElement('div');
+            el.className = 'wheel-segment';
+
+            // Cores alternadas
+            const colorIndex = index % 2;
+            el.style.setProperty('--segment-color', segmentColors[colorIndex]);
+            el.style.setProperty('--text-color', textColors[colorIndex]);
+
+            // Rotaciona o triângulo para o ângulo do setor
+            el.style.transform = `translateX(-50%) rotate(${index * segmentAngle}deg)`;
+
+            const content = document.createElement('div');
+            content.className = 'segment-content';
+            content.textContent = movie.title;
+            // Se o centro do setor fica à esquerda do círculo, invertemos o lado da escrita
+            const midDeg = (index * segmentAngle + segmentAngle/2) % 360;
+            if(midDeg > 90 && midDeg < 270){
+                content.classList.add('flip');
+            }
+
+            el.appendChild(content);
+            rouletteEl.appendChild(el);
+
+            // Label no anel externo
+            const labelArc = document.createElement('div');
+            labelArc.className = 'label-arc';
+            labelArc.textContent = movie.title;
+            labelArc.style.setProperty('--deg', `${midDeg}deg`);
+            labelArc.style.setProperty('--n', numSegments);
+            labelsArcEl.appendChild(labelArc);
+        });
+
+        spinBtn.disabled = false;
+        resultEl.textContent = `Filmes disponíveis: ${numSegments}`;
+    }
+
+    /**
+     * Inicia a rotação da roleta.
+     */
+    function spinRoulette() {
+        if (isSpinning || availableMovies.length === 0) return;
+        isSpinning = true;
+        spinBtn.disabled = true;
+        resultEl.textContent = "Girando...";
+        
+        const numSegments = availableMovies.length;
+        const segmentAngle = 360 / numSegments;
+        
+        const winningIndex = Math.floor(Math.random() * numSegments);
+        const winningMovie = availableMovies[winningIndex];
+
+        // Calcula o ângulo para que o CENTRO do segmento vencedor pare no topo (0 graus)
+        // O ponteiro está no 0 graus (apontando para cima).
+        // Precisamos girar a roleta no sentido horário para levar o segmento vencedor até lá.
+        // O centro do segmento `winningIndex` está em `winningIndex * segmentAngle + segmentAngle / 2`.
+        // Para que ele pare no topo, subtraímos esse ângulo de uma rotação completa.
+        
+        // Adiciona 5 a 10 voltas completas (1800 a 3600 graus)
+        const fullSpins = 360 * (Math.floor(Math.random() * 6) + 5); 
+        
+        // Onde o centro do segmento vencedor está ANTES da rotação principal (relativo ao 0 grau)
+    // Com a nova geometria: cada triângulo aponta inicialmente para BAIXO (180º) quando rotate(0deg).
+    // O centro do setor vencedor está em 180º + winningIndex*segmentAngle.
+    const initialWinningSegmentCenterAngle = 180 + (winningIndex * segmentAngle);
+        
+        // O ângulo que a roleta precisa girar para levar o centro do segmento vencedor para o topo (0 graus)
+        const angleToAlign = 360 - initialWinningSegmentCenterAngle;
+
+        // Rotação total: voltas extras + ângulo para alinhar
+    const totalRotation = currentRotation + fullSpins + angleToAlign;
+
+    // aplica a mesma rotação à roleta e ao anel de labels para andarem juntos
+    rouletteEl.style.transform = `rotate(${totalRotation}deg)`;
+    labelsArcEl.style.transform = `rotate(${totalRotation}deg)`;
+    labelsArcEl.style.setProperty('--rot', `${totalRotation}deg`);
+        
+        rouletteEl.addEventListener('transitionend', function handler() {
+            isSpinning = false;
+            spinBtn.disabled = false;
+            currentRotation = totalRotation;
+            
+            resultEl.innerHTML = `O filme escolhido é: <strong>${winningMovie.title}</strong> (${winningMovie.year})`;
+            // Destaque visual no segmento e no label
+            [...rouletteEl.children].forEach((seg, i)=> seg.classList.toggle('selected', i === winningIndex));
+            [...labelsArcEl.children].forEach((lab, i)=> lab.classList.toggle('selected', i === winningIndex));
+            
+            rouletteEl.removeEventListener('transitionend', handler);
+        });
+    }
+
+    spinBtn.addEventListener('click', spinRoulette);
+
+    // Inicializa a roleta ao carregar a página
+    prepareRoulette();
+
+    // Atualiza posição dos labels ao redimensionar
+    window.addEventListener('resize', ()=>{
+        prepareRoulette();
+    });
+
+</script>
+</body>
+</html>
