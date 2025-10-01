@@ -302,36 +302,36 @@ let currentMovieId = null;
 /* ===== Lista de 31 filmes (id, titulo, ano, link opcional) ===== */
 const movies = [
   {id:"filme-1",  title:"Psicose", year:1960, link: "https://drive.google.com/drive/folders/1nJDVVrTsKn8WgvwinB4Duz5PLQj6FpMh", poster: "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQFAgx3cUlsYbxsajDjsOXmFI960HLCXo1XrWyCU0_AGv0y8B5aq_9N5EAGmywN193HaXYVAQ"},
-  {id:"filme-2",  title:"O Bebê de Rosemary", year:1968, link: "https://drive.google.com/drive/folders/1CB-a9BauXQwbmJfwXNQVXKdgwziV0rsF"},
-  {id:"filme-3",  title:"O Massacre da Serra Elétrica", year:1974, link: "https://drive.google.com/drive/folders/1Uo7fsr_BhwtadNvTOPHRK2lNTP9RmO-q"},
-  {id:"filme-4",  title:"O Iluminado", year:1980, link: "https://www.hbomax.com/br/pt/movies/o-iluminado/9370f169-89d8-48c6-912d-8b10590a4de2"},
-  {id:"filme-5",  title:"Carrie, A Estranha", year:1976, link: "https://www.primevideo.com/-/pt/detail/Carrie-A-Estranha-1976/0IE43SXN19DM93KSGY7HSCIHFX"},
-  {id:"filme-6",  title:"Suspiria", year:1977, link: "https://drive.google.com/drive/folders/1-QQzqSe3ibUjq1OE2vSi7gZaeffDBX48"},
-  {id:"filme-7",  title:"Halloween", year:1978, link: "https://drive.google.com/drive/folders/1zSXbx7wqe_IEkJnXl7FWmKIQFA50IZkG"},
-  {id:"filme-8",  title:"Alien: O 8º Passageiro", year:1979, link: "https://www.disneyplus.com/pt-br/browse/entity-27389b6b-bf27-45a6-afdf-cef0fe723cff"},
-  {id:"filme-9",  title:"Sexta-Feira 13", year:1980, link: "https://www.hbomax.com/br/pt/movies/sexta-feira-13-1980/091df698-401e-42d9-9886-0b9d4c41b460?utm_source=universal_search"},
-  {id:"filme-10", title:"Chamas da Morte", year:1981, link: "https://x.com/horrordrives/status/1854878401087013375?t=8BaLutevDC_z9YlvvZHRvg&s=19"},
-  {id:"filme-11", title:"Dia dos Namorados Macabro", year:1981, link: "https://x.com/driveshorror/status/1753531643090858307?t=1LruBfZXFTNqi9Aaycbjqw&s=19"},
-  {id:"filme-12", title:"The Thing", year:1982, link: "https://www.primevideo.com/dp/amzn1.dv.gti.16b37cfa-68e9-e375-d65a-1501afcd27d5?autoplay=0&ref_=atv_cf_strg_wb"},
-  {id:"filme-13", title:"Sleepaway Camp", year:1983, link: "https://x.com/driveshorror/status/1784609217673875836?t=8CcqAxPn0KVFVLhtOozHng&s=19"},
-  {id:"filme-14", title:"A Hora do Pesadelo", year:1984, link: "https://www.hbomax.com/br/pt/movies/hora-do-pesadelo/2d0cd140-c9cc-4c3b-8010-f930ef077379?utm_source=universal_search"},
-  {id:"filme-15", title:"Aliens: O Resgate", year:1986, link: "https://www.disneyplus.com/en-br/browse/entity-b2ae8903-e3c5-4ae1-a9f7-885c04985f96?distributionPartner=google"},
-  {id:"filme-16", title:"Hellraiser", year:1987, link: "https://x.com/acervododrive/status/1614019582926245891?t=V5AJdJaGyjhvyjpPuiPtXQ&s=19"},
-  {id:"filme-17", title:"Chucky: O Brinquedo Assassino", year:1988, link: "https://www.primevideo.com/-/pt/detail/Chucky-O-Brinquedo-Assassino/0KABCJ3D1HS0OK0BPTIKWKJUJR"},
-  {id:"filme-26", title:"Atração Mortal", year:1988, link: "https://x.com/acervododrive/status/1710731719869911407?t=efpcpdkYqDQ1eTrMQTo2PA&s=19"},
-  {id:"filme-18", title:"It: A Coisa", year:1990, link: "https://www.hbomax.com/br/pt/movies/de-stephen-king-it-uma-obra-prima-do-medo/0c9f19d2-93a3-498b-9402-97625373b67f"},
-  {id:"filme-19", title:"Candyman", year:1992, link: "https://tv.apple.com/br/movie/o-misterio-de-candyman/umc.cmc.5o7md7yi6ammidcgd8s6tj47r"},
-  {id:"filme-20", title:"Pânico", year:1996, link: "https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19"},
-  {id:"filme-21", title:"Eu Sei o Que Vocês Fizeram no Verão Passado", year:1997, link: "https://www.netflix.com/br-en/title/1181714?source=35&fromWatch=true"},
-  {id:"filme-22", title:"Event Horizon", year:1997, link: "https://www.primevideo.com/-/pt/detail/Event-Horizon-Nave-do-Terror/0KABCJ3D1HS0OK0BPTIKWKJUJR"},
-  {id:"filme-23", title:"Lenda Urbana", year:1998, link: "https://www.netflix.com/br/title/70011198"},
-  {id:"filme-24", title:"O Chamado", year:2002, link: "https://tv.apple.com/br/movie/o-chamado/umc.cmc.2ksr5tpy9g97n8d3ohyqog9o5"},
-  {id:"filme-25", title:"O Grito", year:2004, link: "https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19"},
-  {id:"filme-27", title:"Invocação do Mal", year:2013, link: "https://www.hbomax.com/br/pt/movies/invocacao-do-mal/d1b146e9-7426-4463-804d-3ca656e38492?utm_source=universal_search"},
-  {id:"filme-28", title:"Annabelle", year:2014, link: "https://www.hbomax.com/br/pt/movies/annabelle/91307316-5bba-408f-a100-fbf2e1d530a5?utm_source=universal_search"},
-  {id:"filme-29", title:"Midsommar", year:2019, link: "https://drive.google.com/drive/folders/15YuBn0s0u8tf42GvFxowZp-zY-sH4mS6"},
-  {id:"filme-30", title:"Terrifier", year:2019, link: "https://www.primevideo.com/dp/amzn1.dv.gti.04b9bf47-60c8-9918-e3f3-d522194323fd?autoplay=0&ref_=atv_cf_strg_wb"},
-  {id:"filme-31", title:"Pearl", year:2019, link: "https://www.netflix.com/br-en/title/81630892?source=35&fromWatch=true"},
+  {id:"filme-2",  title:"O Bebê de Rosemary", year:1968, link: "https://drive.google.com/drive/folders/1CB-a9BauXQwbmJfwXNQVXKdgwziV0rsF", poster: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fencrypted-tbn1.gstatic.com%2Fimages%3Fq%3Dtbn%3AANd9GcS3bJk-wB2QVm4dmU_PQPKNp3Krr09xNYKs7XLZRvC8Jq_6vCQl&psig=AOvVaw2DirEezLX4jumVa9nwlTg3&ust=1759419062782000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLjnz_Oog5ADFQAAAAAdAAAAABAE"},
+  {id:"filme-3",  title:"O Massacre da Serra Elétrica", year:1974, link: "https://drive.google.com/drive/folders/1Uo7fsr_BhwtadNvTOPHRK2lNTP9RmO-q", poster: "https://upload.wikimedia.org/wikipedia/en/a/a0/The_Texas_Chain_Saw_Massacre_%281974%29_theatrical_poster.jpg"},
+  {id:"filme-4",  title:"O Iluminado", year:1980, link: "https://www.hbomax.com/br/pt/movies/o-iluminado/9370f169-89d8-48c6-912d-8b10590a4de2", poster: "https://br.web.img3.acsta.net/pictures/14/10/10/19/21/152595.jpg"},
+  {id:"filme-5",  title:"Carrie, A Estranha", year:1976, link: "https://www.primevideo.com/-/pt/detail/Carrie-A-Estranha-1976/0IE43SXN19DM93KSGY7HSCIHFX", poster: "https://m.media-amazon.com/images/M/MV5BNWZkYjk5YjktMzY4Yy00MzhmLWE1MTMtOWUyNzkwYWQzZjFlXkEyXkFqcGc@._V1_.jpg"},
+  {id:"filme-6",  title:"Suspiria", year:1977, link: "https://drive.google.com/drive/folders/1-QQzqSe3ibUjq1OE2vSi7gZaeffDBX48", poster: "https://m.media-amazon.com/images/M/MV5BMTFlZWMwOGUtYWVhZi00NWUzLTgyMmYtMDUyY2ZlMTlhMjAzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-7",  title:"Halloween", year:1978, link: "https://drive.google.com/drive/folders/1zSXbx7wqe_IEkJnXl7FWmKIQFA50IZkG", poster: "https://m.media-amazon.com/images/M/MV5BMzZiNTdiYTgtYjNkMS00MmJmLWEwZGQtNmY0NGJkMGE0YmYzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-8",  title:"Alien: O 8º Passageiro", year:1979, link: "https://www.disneyplus.com/pt-br/browse/entity-27389b6b-bf27-45a6-afdf-cef0fe723cff", poster: "https://br.web.img3.acsta.net/pictures/15/05/14/21/14/504650.jpg"},
+  {id:"filme-9",  title:"Sexta-Feira 13", year:1980, link: "https://www.hbomax.com/br/pt/movies/sexta-feira-13-1980/091df698-401e-42d9-9886-0b9d4c41b460?utm_source=universal_search", poster: "https://upload.wikimedia.org/wikipedia/pt/b/b7/Sexta_Feira_13_%281980%29.jpg"},
+  {id:"filme-10", title:"Chamas da Morte", year:1981, link: "https://x.com/horrordrives/status/1854878401087013375?t=8BaLutevDC_z9YlvvZHRvg&s=19", poster: "https://m.media-amazon.com/images/M/MV5BMGY5M2E5MWQtNTE4OC00MDA5LWE3NTUtODU0MDQ3NDg4ODk4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-11", title:"Dia dos Namorados Macabro", year:1981, link: "https://x.com/driveshorror/status/1753531643090858307?t=1LruBfZXFTNqi9Aaycbjqw&s=19", poster: "https://m.media-amazon.com/images/M/MV5BNjFhYjBmYTctZjM1NC00YTAxLTk0YjgtN2M1NTNmMzJjZTA2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-12", title:"The Thing", year:1982, link: "https://www.primevideo.com/dp/amzn1.dv.gti.16b37cfa-68e9-e375-d65a-1501afcd27d5?autoplay=0&ref_=atv_cf_strg_wb", poster: "https://m.media-amazon.com/images/M/MV5BYTA3NDU5MWEtNTk4Yy00ZDNkLThmZTQtMjU3ZGVhYzAyMzU4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-13", title:"Sleepaway Camp", year:1983, link: "https://x.com/driveshorror/status/1784609217673875836?t=8CcqAxPn0KVFVLhtOozHng&s=19", poster: "https://m.media-amazon.com/images/M/MV5BN2IyOWU4MGUtZjEyNC00ODNjLTg3OGMtZmNlM2ZlZDYzOWJjXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-14", title:"A Hora do Pesadelo", year:1984, link: "https://www.hbomax.com/br/pt/movies/hora-do-pesadelo/2d0cd140-c9cc-4c3b-8010-f930ef077379?utm_source=universal_search", poster: "https://br.web.img3.acsta.net/pictures/15/03/10/16/48/336112.jpg"},
+  {id:"filme-15", title:"Aliens: O Resgate", year:1986, link: "https://www.disneyplus.com/en-br/browse/entity-b2ae8903-e3c5-4ae1-a9f7-885c04985f96?distributionPartner=google", poster: "https://br.web.img3.acsta.net/medias/nmedia/18/96/31/17/20459002.jpg"},
+  {id:"filme-16", title:"Hellraiser", year:1987, link: "https://x.com/acervododrive/status/1614019582926245891?t=V5AJdJaGyjhvyjpPuiPtXQ&s=19", poster: "https://m.media-amazon.com/images/M/MV5BZGI4MzkzNzQtYjA3MC00ZjE1LWI0NWUtMDdjNWQ3OTgxZTkwXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-17", title:"Chucky: O Brinquedo Assassino", year:1988, link: "https://www.primevideo.com/-/pt/detail/Chucky-O-Brinquedo-Assassino/0KABCJ3D1HS0OK0BPTIKWKJUJR", poster: "https://br.web.img2.acsta.net/pictures/14/10/10/18/18/494547.jpg"},
+  {id:"filme-26", title:"Atração Mortal", year:1988, link: "https://x.com/acervododrive/status/1710731719869911407?t=efpcpdkYqDQ1eTrMQTo2PA&s=19", poster: "https://m.media-amazon.com/images/M/MV5BMzUyMzJhMjUtOTg5ZC00ODMyLTg1ZTctMjZiOWYyZTMyNDgxXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-18", title:"It: A Coisa", year:1990, link: "https://www.hbomax.com/br/pt/movies/de-stephen-king-it-uma-obra-prima-do-medo/0c9f19d2-93a3-498b-9402-97625373b67f", poster: "https://upload.wikimedia.org/wikipedia/pt/3/34/It_1990.jpg"},
+  {id:"filme-19", title:"Candyman", year:1992, link: "https://tv.apple.com/br/movie/o-misterio-de-candyman/umc.cmc.5o7md7yi6ammidcgd8s6tj47r", poster: "https://upload.wikimedia.org/wikipedia/en/8/89/Candymanposter.jpg"},
+  {id:"filme-20", title:"Pânico", year:1996, link: "https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19", poster: "https://m.media-amazon.com/images/I/811SBSeF3tL._UF894,1000_QL80_.jpg"},
+  {id:"filme-21", title:"Eu Sei o Que Vocês Fizeram no Verão Passado", year:1997, link: "https://www.netflix.com/br-en/title/1181714?source=35&fromWatch=true", poster: "https://upload.wikimedia.org/wikipedia/pt/thumb/5/5b/I_Know_What_You_Did_Last_Summer_%281997%29_Poster.jpg/250px-I_Know_What_You_Did_Last_Summer_%281997%29_Poster.jpg"},
+  {id:"filme-22", title:"Event Horizon", year:1997, link: "https://www.primevideo.com/-/pt/detail/Event-Horizon-Nave-do-Terror/0KABCJ3D1HS0OK0BPTIKWKJUJR", poster: "https://m.media-amazon.com/images/M/MV5BM2M4ZTI2MjMtYjVlNy00Y2E3LTgzM2EtNDA0NTUzZmQxZjY3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-23", title:"Lenda Urbana", year:1998, link: "https://www.netflix.com/br/title/70011198", poster: "https://m.media-amazon.com/images/M/MV5BYWM2NjMyNmQtNDFjMy00OWNmLTg4ZjktOTI3NmE4NjE2NDFiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-24", title:"O Chamado", year:2002, link: "https://tv.apple.com/br/movie/o-chamado/umc.cmc.2ksr5tpy9g97n8d3ohyqog9o5", poster: "https://br.web.img3.acsta.net/c_310_420/pictures/14/12/02/19/31/398428.jpg"},
+  {id:"filme-25", title:"O Grito", year:2004, link: "https://x.com/driveshorror/status/1744162545546498520?t=i9PVhaRoqrvvMu1BRbgT3Q&s=19", poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9w4LV1g-6VLEISzkU_uTtJE_nY6ZHpX1Qbg&s"},
+  {id:"filme-27", title:"Invocação do Mal", year:2013, link: "https://www.hbomax.com/br/pt/movies/invocacao-do-mal/d1b146e9-7426-4463-804d-3ca656e38492?utm_source=universal_search", poster: "https://br.web.img2.acsta.net/pictures/210/166/21016629_2013062820083878.jpg"},
+  {id:"filme-28", title:"Annabelle", year:2014, link: "https://www.hbomax.com/br/pt/movies/annabelle/91307316-5bba-408f-a100-fbf2e1d530a5?utm_source=universal_search", poster: "https://m.media-amazon.com/images/M/MV5BNjkyMDU5ZWQtZDhkOC00ZWFjLWIyM2MtZWFhMDUzNjdlNzU2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"},
+  {id:"filme-29", title:"Midsommar", year:2019, link: "https://drive.google.com/drive/folders/15YuBn0s0u8tf42GvFxowZp-zY-sH4mS6", poster: "https://upload.wikimedia.org/wikipedia/pt/7/7f/Midsommar_2019.png"},
+  {id:"filme-30", title:"Terrifier", year:2019, link: "https://www.primevideo.com/dp/amzn1.dv.gti.04b9bf47-60c8-9918-e3f3-d522194323fd?autoplay=0&ref_=atv_cf_strg_wb", poster: "https://upload.wikimedia.org/wikipedia/pt/thumb/e/e8/Terrifier_-_poster.jpg/250px-Terrifier_-_poster.jpg"},
+  {id:"filme-31", title:"Pearl", year:2019, link: "https://www.netflix.com/br-en/title/81630892?source=35&fromWatch=true", poster: "https://m.media-amazon.com/images/M/MV5BZjAxYzFkOTUtNWM4Ni00OTUwLWEyYjUtMmJlYmVkNWJkZGIzXkEyXkFqcGc@._V1_.jpg"},
 ];
 
 /* ===== Render das capas ===== */
@@ -370,7 +370,9 @@ const starInputs = [...document.querySelectorAll('#starGroup input[name="stars"]
 function openModal(movie){
   currentMovieId = movie.id;
   modalTitle.textContent = `${movie.year} · ${movie.title}`;
-  modalCover.style.backgroundImage = `linear-gradient(145deg, #210000, #0b0000), url('${movie.poster || ""}')`;
+  // Exibe o poster como <img> para evitar sumiço
+  modalCover.innerHTML = movie.poster ? `<img src="${movie.poster}" alt="Poster de ${movie.title}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:16px;">` : "";
+  modalCover.style.backgroundImage = "linear-gradient(145deg, #210000, #0b0000)";
   modalCover.style.backgroundSize = "cover";
   modalCover.style.backgroundPosition = "center";
   
